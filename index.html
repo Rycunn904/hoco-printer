@@ -1,11 +1,13 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Photobooth</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <main class="app">
     <header>
@@ -30,6 +32,11 @@
       <label class="upload">
         Bottom image
         <input id="imageUpload" type="file" accept="image/*">
+      </label>
+
+      <label class="upload">
+        Background image
+        <input id="backgroundUpload" type="file" accept="image/*">
       </label>
 
       <button id="startButton">Start Photobooth</button>
@@ -60,13 +67,23 @@
 
     <section class="saved-image">
       <div>
-        <h2>Saved bottom image</h2>
-        <p id="savedStatus">No image saved.</p>
+        <h2>Saved images</h2>
+        <p id="savedStatus">No images saved.</p>
       </div>
-      <button id="clearImageButton" class="danger">Clear Saved Image</button>
+
+      <div class="saved-actions">
+        <button id="clearImageButton" class="danger">
+          Clear Bottom Image
+        </button>
+
+        <button id="clearBackgroundButton" class="danger">
+          Clear Background
+        </button>
+      </div>
     </section>
   </main>
 
   <script src="app.js"></script>
 </body>
+
 </html>

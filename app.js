@@ -1,20 +1,25 @@
 const CONFIG = {
   photos: 3,
   countdownSeconds: 3,
-  storageKey: "photobooth-bottom-image"
+
+  bottomImageStorageKey: "photobooth-bottom-image",
+  backgroundImageStorageKey: "photobooth-background-image"
 };
 
 const video = document.getElementById("video");
 const canvas = document.getElementById("canvas");
 const countdownSelect = document.getElementById("countdown");
 const imageUpload = document.getElementById("imageUpload");
+const backgroundUpload = document.getElementById("backgroundUpload");
 const startButton = document.getElementById("startButton");
 const retakeButton = document.getElementById("retakeButton");
 const printButton = document.getElementById("printButton");
 const clearImageButton = document.getElementById("clearImageButton");
+const clearBackgroundButton = document.getElementById("clearBackgroundButton");
 const countdownOverlay = document.getElementById("countdownOverlay");
 const statusText = document.getElementById("status");
 const savedStatus = document.getElementById("savedStatus");
+const strip = document.getElementById("strip");
 
 const slots = [
   document.querySelector(".strip-slot:nth-child(1)"),
@@ -121,6 +126,7 @@ async function takePhotos() {
   startButton.disabled = true;
   countdownSelect.disabled = true;
   imageUpload.disabled = true;
+  backgroundUpload.disabled = true;
 
   try {
     for (let i = 0; i < CONFIG.photos; i++) {
@@ -149,10 +155,11 @@ async function takePhotos() {
     startButton.disabled = false;
     countdownSelect.disabled = false;
     imageUpload.disabled = false;
+    backgroundUpload.disabled = false;
   }
 }
 
-function saveUploadedImage(file) {
+function saveUploadedImage(file, storageKey, type) {
   if (!file) return;
 
   if (!file.type.startsWith("image/")) {
@@ -164,13 +171,23 @@ function saveUploadedImage(file) {
 
   reader.onload = () => {
     try {
-      localStorage.setItem(CONFIG.storageKey, reader.result);
-      setBottomImage(reader.result);
-      savedStatus.textContent = "Image saved in this browser.";
+      localStorage.setItem(storageKey, reader.result);
+
+      if (type === "bottom") {
+        setBottomImage(reader.result);
+      }
+
+      if (type === "background") {
+        setBackgroundImage(reader.result);
+      }
+
+      updateSavedStatus();
     } catch (error) {
       console.error(error);
-      savedStatus.textContent =
-        "That image is too large for browser storage. Try a smaller image.";
+
+      alert(
+        "That image is too large for browser storage. Try a smaller image."
+      );
     }
   };
 
@@ -181,21 +198,78 @@ function setBottomImage(dataUrl) {
   setSlotImage(slots[3], dataUrl, true);
 }
 
-function loadSavedImage() {
-  const saved = localStorage.getItem(CONFIG.storageKey);
+function setBackgroundImage(dataUrl) {
+  strip.classList.add("has-background");
 
-  if (saved) {
-    setBottomImage(saved);
-    savedStatus.textContent = "Saved image loaded.";
+  strip.style.setProperty(
+    "--background-image",
+    `url("${dataUrl}")`
+  );
+}
+
+function updateSavedStatus() {
+  const bottom = localStorage.getItem(
+    CONFIG.bottomImageStorageKey
+  );
+
+  const background = localStorage.getItem(
+    CONFIG.backgroundImageStorageKey
+  );
+
+  if (bottom && background) {
+    savedStatus.textContent =
+      "Bottom image and background are saved.";
+  } else if (bottom) {
+    savedStatus.textContent =
+      "Bottom image is saved.";
+  } else if (background) {
+    savedStatus.textContent =
+      "Background image is saved.";
   } else {
-    savedStatus.textContent = "No image saved.";
+    savedStatus.textContent =
+      "No images saved.";
   }
 }
 
+function loadSavedImages() {
+  const bottom = localStorage.getItem(
+    CONFIG.bottomImageStorageKey
+  );
+
+  const background = localStorage.getItem(
+    CONFIG.backgroundImageStorageKey
+  );
+
+  if (bottom) {
+    setBottomImage(bottom);
+  }
+
+  if (background) {
+    setBackgroundImage(background);
+  }
+
+  updateSavedStatus();
+}
+
 function clearSavedImage() {
-  localStorage.removeItem(CONFIG.storageKey);
+  localStorage.removeItem(
+    CONFIG.bottomImageStorageKey
+  );
+
   slots[3].textContent = "Your image";
-  savedStatus.textContent = "No image saved.";
+
+  updateSavedStatus();
+}
+
+function clearSavedBackground() {
+  localStorage.removeItem(
+    CONFIG.backgroundImageStorageKey
+  );
+
+  strip.classList.remove("has-background");
+  strip.style.removeProperty("--background-image");
+
+  updateSavedStatus();
 }
 
 startButton.addEventListener("click", takePhotos);
@@ -211,13 +285,34 @@ printButton.addEventListener("click", () => {
 });
 
 imageUpload.addEventListener("change", event => {
-  saveUploadedImage(event.target.files[0]);
+  saveUploadedImage(
+    event.target.files[0],
+    CONFIG.bottomImageStorageKey,
+    "bottom"
+  );
+
+  event.target.value = "";
+});
+
+backgroundUpload.addEventListener("change", event => {
+  saveUploadedImage(
+    event.target.files[0],
+    CONFIG.backgroundImageStorageKey,
+    "background"
+  );
+
   event.target.value = "";
 });
 
 clearImageButton.addEventListener("click", () => {
   if (confirm("Clear the saved bottom image?")) {
     clearSavedImage();
+  }
+});
+
+clearBackgroundButton.addEventListener("click", () => {
+  if (confirm("Clear the saved background image?")) {
+    clearSavedBackground();
   }
 });
 
@@ -232,5 +327,5 @@ window.addEventListener("beforeunload", () => {
   }
 });
 
-loadSavedImage();
+loadSavedImages();
 startCamera();
