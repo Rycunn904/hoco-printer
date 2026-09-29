@@ -28,7 +28,9 @@ header {
   margin-bottom: 24px;
 }
 
-h1, h2, p {
+h1,
+h2,
+p {
   margin-top: 0;
 }
 
@@ -37,6 +39,10 @@ header p,
 .saved-image p {
   color: var(--muted);
 }
+
+/* -----------------------------
+Controls
+----------------------------- */
 
 .controls {
   display: flex;
@@ -92,9 +98,15 @@ button.danger {
   border-color: #d6a2a4;
 }
 
+/* -----------------------------
+Main layout
+----------------------------- */
+
 .booth {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.7fr);
+  grid-template-columns:
+    minmax(0, 1.5fr) minmax(260px, 0.7fr);
+
   gap: 20px;
 }
 
@@ -107,38 +119,59 @@ button.danger {
   padding: 18px;
 }
 
+/* -----------------------------
+Camera
+----------------------------- */
+
 .camera-wrap {
   position: relative;
   overflow: hidden;
+
   width: 100%;
   aspect-ratio: 4 / 3;
+
   background: #111;
   border-radius: 8px;
 }
 
 video {
   display: block;
+
   width: 100%;
   height: 100%;
+
   object-fit: cover;
+
   transform: scaleX(-1);
 }
 
 .countdown-overlay {
   position: absolute;
   inset: 0;
+
   display: grid;
   place-items: center;
+
   color: white;
-  font-size: clamp(60px, 12vw, 130px);
+
+  font-size:
+    clamp(60px, 12vw, 130px);
+
   font-weight: 800;
-  text-shadow: 0 3px 12px #000;
+
+  text-shadow:
+    0 3px 12px #000;
+
   pointer-events: none;
 }
 
 #status {
   margin: 12px 0 0;
 }
+
+/* -----------------------------
+Preview
+----------------------------- */
 
 .preview-panel {
   display: flex;
@@ -150,39 +183,47 @@ video {
   align-self: flex-start;
 }
 
+/*
+
+* The strip is a 2 × 4 ratio.
+  */
 .strip {
   position: relative;
+
   width: min(100%, 260px);
+
   aspect-ratio: 1 / 2;
 
   background: white;
+
   border: 1px solid #bbb;
 
   display: grid;
-  grid-template-rows: repeat(3, 1fr) 1fr;
+
+  grid-template-rows:
+    repeat(3, 1fr) 1fr;
 
   overflow: hidden;
 }
 
-/* Background/frame image */
-.strip.has-background {
-  background-image: var(--background-image);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
+/*
 
+* Photo slots are BELOW the border layer.
+  */
 .strip-slot {
   position: relative;
+
   z-index: 1;
 
   display: grid;
   place-items: center;
 
   color: #888;
+
   background: #eee;
 
   border-bottom: 1px solid #ccc;
+
   overflow: hidden;
 }
 
@@ -191,23 +232,27 @@ video {
 }
 
 /*
- * When a background image is selected, leave a small
- * transparent border around each photo so the background
- * can be seen.
- */
+
+* When a border exists, remove the gray
+* backgrounds so the border can be seen.
+  */
 .strip.has-background .strip-slot {
   background: transparent;
-  padding: 5px;
-  border-bottom: 0;
-}
 
-.strip.has-background .strip-slot img {
-  border-radius: 2px;
+  border-bottom: 0;
+
+  /*
+
+* Small spacing keeps the photos from
+* completely covering the frame.
+  */
+  padding: 5px;
 }
 
 .strip-slot img {
   width: 100%;
   height: 100%;
+
   object-fit: cover;
 }
 
@@ -215,21 +260,70 @@ video {
   object-fit: contain;
 }
 
+/*
+
+* ACTUAL BACKGROUND / BORDER IMAGE
+*
+* This sits above the photos.
+*
+* Use a PNG with a transparent center
+* for a traditional photo-booth frame.
+  */
+.background-frame {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 10;
+
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: fill;
+
+  pointer-events: none;
+
+  user-select: none;
+}
+
+/*
+
+* Hide the frame until one has been loaded.
+  */
+.background-frame[hidden] {
+  display: none;
+}
+
+/* -----------------------------
+Saved images
+----------------------------- */
+
 .saved-image {
   display: flex;
+
   justify-content: space-between;
   align-items: center;
+
   gap: 15px;
+
   margin-top: 20px;
 }
 
 .saved-actions {
   display: flex;
   flex-wrap: wrap;
+
   gap: 8px;
 }
 
+/* -----------------------------
+Mobile
+----------------------------- */
+
 @media (max-width: 750px) {
+
   .booth {
     grid-template-columns: 1fr;
   }
@@ -244,15 +338,16 @@ video {
   }
 }
 
-/*
-  Print layout:
-  The strip itself is exactly 2in × 4in.
-  Browser print settings should use:
-  - Scale: 100%
-  - Margins: None
-  - Paper: 2 × 4 in (if your printer supports it)
-*/
+/* ==================================================
+PRINT
+================================================== */
+
 @media print {
+
+  /*
+
+* 2 × 4 inch physical print.
+  */
   @page {
     size: 2in 4in;
     margin: 0;
@@ -262,11 +357,20 @@ video {
   body {
     width: 2in;
     height: 4in;
+
+
     margin: 0;
     padding: 0;
+
     background: white;
+
+
   }
 
+  /*
+
+* Hide everything except the preview.
+  */
   body * {
     visibility: hidden;
   }
@@ -276,24 +380,112 @@ video {
     visibility: visible;
   }
 
+  /*
+
+* Put the strip directly at the top-left
+* of the printed page.
+  */
   .preview-panel {
     position: absolute;
+
+
     left: 0;
+
+
+
     top: 0;
+
     width: 2in;
     height: 4in;
+
     padding: 0;
     margin: 0;
+
     border: 0;
+
+    display: block;
+
+
   }
 
   .preview-panel h2 {
     display: none;
   }
 
+  /*
+
+* EXACT 2 × 4 strip.
+  */
   .strip {
+    position: relative;
+
+
+    width: 2in;
+
+
+
+    height: 4in;
+
+    border: 0;
+
+    margin: 0;
+    padding: 0;
+
+    overflow: hidden;
+
+
+  }
+
+  /*
+
+* Make sure the actual frame image
+* remains visible in the print.
+  */
+  .background-frame {
+    display: block;
+
+
+    visibility: visible;
+
+
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
     width: 2in;
     height: 4in;
+
+    z-index: 10;
+
+
+  }
+
+  /*
+
+* Keep photos underneath the frame.
+  */
+  .strip-slot {
+    position: relative;
+
+
+    z-index: 1;
+
+
+
     border: 0;
+
+
+  }
+
+  /*
+
+* Prevent browser print settings from
+* altering the image rendering.
+  */
+  img {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 }

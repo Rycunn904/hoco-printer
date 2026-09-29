@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="en">
 
 <head>
@@ -14,6 +15,7 @@
       <h1>Photobooth</h1>
       <p>Take three photos and create a 2 × 4 photo strip.</p>
     </header>
+
 
     <section class="controls">
       <label>
@@ -35,13 +37,17 @@
       </label>
 
       <label class="upload">
-        Background image
+        Background / Border
         <input id="backgroundUpload" type="file" accept="image/*">
       </label>
 
       <button id="startButton">Start Photobooth</button>
-      <button id="retakeButton" class="secondary" hidden>Retake Photos</button>
-      <button id="printButton" class="secondary" hidden>Print 2 × 4</button>
+      <button id="retakeButton" class="secondary" hidden>
+        Retake Photos
+      </button>
+      <button id="printButton" class="secondary" hidden>
+        Print 2 × 4
+      </button>
     </section>
 
     <section class="booth">
@@ -50,17 +56,28 @@
           <video id="video" autoplay playsinline muted></video>
           <div id="countdownOverlay" class="countdown-overlay"></div>
         </div>
+
         <canvas id="canvas" hidden></canvas>
+
         <p id="status">Camera is starting…</p>
       </div>
 
       <div class="preview-panel">
         <h2>Preview</h2>
+
         <div id="strip" class="strip">
+
           <div class="strip-slot">Photo 1</div>
           <div class="strip-slot">Photo 2</div>
           <div class="strip-slot">Photo 3</div>
           <div class="strip-slot bottom-slot">Your image</div>
+
+          <!--
+        This is an actual image instead of a CSS background.
+        This makes the border appear in print reliably.
+      -->
+          <img id="backgroundFrame" class="background-frame" alt="" aria-hidden="true">
+
         </div>
       </div>
     </section>
@@ -81,9 +98,12 @@
         </button>
       </div>
     </section>
+
+
   </main>
 
   <script src="app.js"></script>
+
 </body>
 
 </html>
