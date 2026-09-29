@@ -10,18 +10,6 @@ A simple client-side photobooth for GitHub Pages.
 - Persistent bottom image using `localStorage`
 - 2 × 4 inch photo strip
 - Browser printing
-- No backend required
-
-## GitHub Pages
-
-1. Create a GitHub repository.
-2. Upload `index.html`, `style.css`, `app.js`, and `README.md`.
-3. Open the repository's **Settings → Pages**.
-4. Select **Deploy from a branch**.
-5. Select the branch containing these files and `/ (root)`.
-6. Save.
-
-GitHub Pages will provide an HTTPS URL. Camera access requires a secure context, so use the HTTPS GitHub Pages address.
 
 ## Printing
 
@@ -47,17 +35,3 @@ This means:
 - The image is stored only in that browser on that device.
 - Clearing site data/browser storage removes it.
 - Very large images may exceed the browser's localStorage quota.
-
-## Configuration
-
-The main settings are at the top of `app.js`:
-
-```js
-const CONFIG = {
-  photos: 3,
-  countdownSeconds: 3,
-  storageKey: "photobooth-bottom-image"
-};
-```
-
-The UI currently lets the user change the countdown, so `countdownSeconds` is mainly the default value.
